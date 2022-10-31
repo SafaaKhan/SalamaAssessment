@@ -13,6 +13,7 @@ namespace SalamaAssessment_DataAccess.Repositories.IRepositires
         Task<PremiumValue> GetPremium(PostPQMInfoAPI postPQMInfoAPI);
 
         //post payment info
+        Task<ReturnedPaymentInfo> PostPaymentInfo(PostPaymentInfo postPaymentInfo);
 
         //post policy information to salama core system
     }

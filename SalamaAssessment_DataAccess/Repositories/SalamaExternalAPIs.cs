@@ -44,6 +44,43 @@ namespace SalamaAssessment_DataAccess.Repositories
 
             return null;
         }
+
+        public async Task<ReturnedPaymentInfo> PostPaymentInfo(PostPaymentInfo postPaymentInfo)
+        {
+            var client = new RestClient(WC.SalamaURL + "spg");
+            var request = new RestRequest();
+            request.Method = Method.Post;
+
+            request.AddHeader("Content-Type", "application/json");
+
+            request.AddJsonBody(postPaymentInfo);
+
+            var response = await client.ExecuteAsync(request);
+
+            if (response.IsSuccessful)
+            {
+                try
+                {
+                    var content = JsonConvert.DeserializeObject<ReturnedPaymentInfo>(response.Content);
+                    if (content.status == true)
+                    {
+                        _logger.LogInformation(response.Content);
+                        return content;
+                    }
+                    _logger.LogInformation(response.Content);
+                    return null;
+                }
+                catch
+                {
+                    _logger.LogInformation(response.Content);
+                    return null;
+                }
+                
+            }
+
+            _logger.LogInformation(response.Content);
+            return null;
+        }
     }
 }
 

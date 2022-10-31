@@ -51,7 +51,7 @@ namespace SalamaAssessment.Controllers
                 PremiumValue premiumValue = await _salamExternalAPIs.GetPremium(postPQMInfo);
                 if (premiumValue.Premium == 0 || premiumValue==null)
                 {
-                    return View(quoteInfovm);
+                    return View(quoteInfovm);//error mes
                 }
 
                 var getPremiumViewModel = new GetPremiumViewModel
@@ -67,26 +67,84 @@ namespace SalamaAssessment.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult BuyPolicy(GetPremiumViewModel getPremiumViewModel)
+        public async Task<IActionResult> BuyPolicy(GetPremiumViewModel getPremiumViewModel)
         {
-            var test = getPremiumViewModel;
-            return View("Index", getPremiumViewModel.QuoteInfoVM);
+            // add the QuoteInfo to db
+            var quoteInfo = new QuoteInfo
+            {
+                CustomerName = getPremiumViewModel.QuoteInfoVM.CustomerName,
+                CustomerNationalId = getPremiumViewModel.QuoteInfoVM.CustomerNationalId.ToString(),
+                DateOfBirth = getPremiumViewModel.QuoteInfoVM.DateOfBirth,
+                City = getPremiumViewModel.QuoteInfoVM.City,
+                Gender = getPremiumViewModel.QuoteInfoVM.Gender,
+                MaritalStatus = getPremiumViewModel.QuoteInfoVM.MaritalStatus,
+                VehicleMake = getPremiumViewModel.QuoteInfoVM.VehicleMake,
+                QuotationId=""
+            };
+            _db.QuoteInfo.Add(quoteInfo);
+            await _db.SaveChangesAsync();
+
+            quoteInfo.QuotationId = (quoteInfo.Id + 50200).ToString();
+            await _db.SaveChangesAsync();
+
+            //create payment model- pass it to the view
+            var paymentInfoVM = new PaymentInfoVM();
+            paymentInfoVM.QuotationId=quoteInfo.QuotationId;
+            paymentInfoVM.QuotationIdKey = quoteInfo.Id;
+            return View("BuyPolicy", paymentInfoVM);
         }
 
-            public IActionResult Privacy()
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PurchasePolicy(PaymentInfoVM paymentInfoVM)
         {
-        //    var qoutInfo = new QuoteInfo
-        //    {
-        //        CustomerName = quoteInfovm.CustomerName,
-        //        CustomerNationalId = quoteInfovm.CustomerNationalId.ToString(),
-        //        DateOfBirth = quoteInfovm.DateOfBirth,//change form
-        //        City = quoteInfovm.City,
-        //        Gender = quoteInfovm.Gender,
-        //        MaritalStatus = quoteInfovm.MaritalStatus,
-        //        VehicleMake = quoteInfovm.VehicleMake
-        //    };
-        //    _db.quoteInfo.Add(qoutInfo);
-        //    await _db.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                // post the payment in to spg api
+                PostPaymentInfo postPaymentInfo = new PostPaymentInfo
+                {
+                    cardholder_name = paymentInfoVM.CardholderName,
+                    card_number = paymentInfoVM.CardNumber,
+                    cvv = paymentInfoVM.CVV,
+                    expiry_date = paymentInfoVM.ExpiryDate.Replace(@"/", string.Empty),
+                    quotation_id = paymentInfoVM.QuotationId
+                };
+
+                ReturnedPaymentInfo returnedPaymentInfo = await _salamExternalAPIs.PostPaymentInfo(postPaymentInfo);
+                if ( returnedPaymentInfo == null) //?
+                {
+                    return View("BuyPolicy",paymentInfoVM);//error mes (fail to process payment )
+                }
+
+                //save payment info to the database
+                PaymentInfo paymentInfo = new PaymentInfo
+                {
+                    Id= Guid.NewGuid().ToString(),
+                    CardholderName= paymentInfoVM.CardholderName,
+                    CardNumber=paymentInfoVM.CardNumber,
+                    CVV= paymentInfoVM.CVV,
+                    ExpiryDate=paymentInfoVM.ExpiryDate,
+                    QuoteInfoId= paymentInfoVM.QuotationId,
+                    QuoteInfoIdKey= paymentInfoVM.QuotationIdKey
+                };
+                _db.PaymentInfo.Add(paymentInfo);
+                await _db.SaveChangesAsync();
+
+                //Push Policy Information to SALAMA Core System (IssuePolicy)
+                PushPolicyInfoToSCoreSys();
+                return View("PolicyDetails");
+            }
+            return View("BuyPolicy",paymentInfoVM);
+        }
+
+        private IActionResult PushPolicyInfoToSCoreSys()
+        {
+            //must return the model not view
+            return View();
+        }
+        public IActionResult Privacy()
+        {
             return View();
         }
 

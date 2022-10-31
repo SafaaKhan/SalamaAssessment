@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalamaAssessment.Data;
 
@@ -11,9 +12,10 @@ using SalamaAssessment.Data;
 namespace SalamaAssessment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221031224225_fixRelationShipBetweenQuoteInfoAndPaymentInfoTables")]
+    partial class fixRelationShipBetweenQuoteInfoAndPaymentInfoTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,16 +247,12 @@ namespace SalamaAssessment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QuoteInfoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuoteInfoIdKey")
+                    b.Property<int>("QuoteInfoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuoteInfoIdKey")
+                    b.HasIndex("QuoteInfoId")
                         .IsUnique();
 
                     b.ToTable("PaymentInfo");
@@ -356,7 +354,7 @@ namespace SalamaAssessment.Data.Migrations
                 {
                     b.HasOne("SalamaAssessment_Models.Models.QuoteInfo", "QuoteInfo")
                         .WithOne("PaymentInfo")
-                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "QuoteInfoIdKey")
+                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "QuoteInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

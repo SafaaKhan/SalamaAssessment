@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalamaAssessment.Data;
 
@@ -11,9 +12,10 @@ using SalamaAssessment.Data;
 namespace SalamaAssessment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221031180713_addPaymentInfoTable")]
+    partial class addPaymentInfoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,17 +247,7 @@ namespace SalamaAssessment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QuoteInfoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuoteInfoIdKey")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("QuoteInfoIdKey")
-                        .IsUnique();
 
                     b.ToTable("PaymentInfo");
                 });
@@ -349,23 +341,6 @@ namespace SalamaAssessment.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
-                {
-                    b.HasOne("SalamaAssessment_Models.Models.QuoteInfo", "QuoteInfo")
-                        .WithOne("PaymentInfo")
-                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "QuoteInfoIdKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuoteInfo");
-                });
-
-            modelBuilder.Entity("SalamaAssessment_Models.Models.QuoteInfo", b =>
-                {
-                    b.Navigation("PaymentInfo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
