@@ -16,6 +16,7 @@ namespace SalamaAssessment.Controllers
         private readonly ISalamExternalAPIs _salamExternalAPIs;
         private readonly ApplicationDbContext _db;
 
+
         public HomeController(ILogger<HomeController> logger, 
             ISalamExternalAPIs salamExternalAPIs,
             ApplicationDbContext db)
@@ -28,7 +29,7 @@ namespace SalamaAssessment.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            QuoteInfoVM quoteInfovm = new QuoteInfoVM();//viewModel+validation
+            QuoteInfoVM quoteInfovm = new QuoteInfoVM();
            
             return View(quoteInfovm);
         }
@@ -41,7 +42,7 @@ namespace SalamaAssessment.Controllers
             {
                 var postPQMInfo = new PostPQMInfoAPI
                 {
-                    city = "",
+                    city = quoteInfovm.City.ToString(),
                     dob = quoteInfovm.DateOfBirth?.ToString("dd-MM-yyyy"),
                     gender = quoteInfovm.Gender.ToString(),
                     marital_status = quoteInfovm.MaritalStatus.ToString(),
@@ -55,26 +56,24 @@ namespace SalamaAssessment.Controllers
 
                 var getPremiumViewModel = new GetPremiumViewModel
                 {
-                    DQuoteInfoVM=new DisplayQuoteInfoVM
-                    {
-                        CustomerName=quoteInfovm.CustomerName,
-                        CustomerNationalId=quoteInfovm.CustomerNationalId,
-                        City=quoteInfovm.City,
-                        DateOfBirth= quoteInfovm.DateOfBirth?.ToString("dd-MM-yyyy"),
-                        Gender=quoteInfovm.Gender,
-                        MaritalStatus=quoteInfovm.MaritalStatus,
-                        VehicleMake=quoteInfovm.VehicleMake
-                    },
-                    PremiumValue= premiumValue
+                    PremiumValue= premiumValue,
+                    QuoteInfoVM=quoteInfovm
                 };
+                ViewBag.DateOfBirth = quoteInfovm.DateOfBirth?.ToString("dd-MM-yyyy");
                 return View("GetPremium", getPremiumViewModel);
             }
             return View(quoteInfovm);
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult BuyPolicy(GetPremiumViewModel getPremiumViewModel)
+        {
+            var test = getPremiumViewModel;
+            return View("Index", getPremiumViewModel.QuoteInfoVM);
+        }
 
-        public IActionResult Privacy()
+            public IActionResult Privacy()
         {
         //    var qoutInfo = new QuoteInfo
         //    {

@@ -9,7 +9,7 @@ namespace SalamaAssessment_Models.ViewModels
 {
     public class GetPremiumViewModel
     {
-        public DisplayQuoteInfoVM DQuoteInfoVM { get; set; }
+        public QuoteInfoVM QuoteInfoVM { get; set; }
         public PremiumValue PremiumValue { get; set; }
     }
 }

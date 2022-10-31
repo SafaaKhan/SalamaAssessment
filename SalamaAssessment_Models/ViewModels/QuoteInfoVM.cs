@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,10 @@ namespace SalamaAssessment_Models.ViewModels
         [DisplayName("Customer Name")]
         public string CustomerName { get; set; }
 
-        [Required]
-        //[Range(9,11, ErrorMessage = "Customer National Id must be 10 digits")]
+        [Required(ErrorMessage = "The Customer National Id is required")]
+        [RegularExpression(@"^([0-9]{10})$", ErrorMessage = "Customer National Id must be 10 digits")]
         [DisplayName("Customer National Id")]
-        public int CustomerNationalId { get; set; }
+        public string CustomerNationalId { get; set; }
 
         [Required]
         [DisplayName("City")]

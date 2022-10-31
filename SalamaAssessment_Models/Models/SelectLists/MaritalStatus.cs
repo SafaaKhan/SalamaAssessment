@@ -11,6 +11,5 @@ namespace SalamaAssessment_Models.Models.SelectLists
         Single,
         Married,
         Widow,
-        Separated,
     }
 }

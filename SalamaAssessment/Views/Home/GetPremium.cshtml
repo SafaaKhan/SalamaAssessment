@@ -1,5 +1,5 @@
-﻿@using SalamaAssessment_Models.Models.SelectLists
-@model SalamaAssessment_Models.ViewModels.GetPremiumViewModel
+﻿@model SalamaAssessment_Models.ViewModels.GetPremiumViewModel
+@using SalamaAssessment_Models.Models.SelectLists
 
 @{
     ViewData["Title"] = "Home Page";
@@ -9,44 +9,55 @@
     <h1>The Premium</h1>
     <p>Calculated Premium | Motor Insurance </p>
 </div>
-<form method="post" enctype="multipart/form-data" class="row g-3">
+<form method="post" enctype="multipart/form-data" asp-action="BuyPolicy" class="row g-3">
+
     <div class="col-md-4">
-        <label asp-for="DQuoteInfoVM.CustomerName" class="form-label"></label>
-        <input type="text" disabled class="form-control" asp-for="DQuoteInfoVM.CustomerName">
+        <label asp-for="QuoteInfoVM.CustomerName" class="form-label"></label>
+        <input type="text" disabled class="form-control" asp-for="QuoteInfoVM.CustomerName">
+        <input type="text" hidden class="form-control" asp-for="QuoteInfoVM.CustomerName">
     </div>
     <div class="col-md-4">
-        <label asp-for="DQuoteInfoVM.CustomerNationalId" class="form-label"></label>
-        <input type="text" disabled class="form-control" asp-for="DQuoteInfoVM.CustomerNationalId" placeholder="1XXXXXXXXX">
+        <label asp-for="QuoteInfoVM.CustomerNationalId" class="form-label"></label>
+        <input type="text" disabled class="form-control" asp-for="QuoteInfoVM.CustomerNationalId">
+        <input type="text" hidden class="form-control" asp-for="QuoteInfoVM.CustomerNationalId" placeholder="1XXXXXXXXX">
     </div>
     <div class="col-4">
-         <label asp-for="DQuoteInfoVM.DateOfBirth" class="form-label"></label>
-        <input type="text" disabled class="form-control" asp-for="DQuoteInfoVM.DateOfBirth">
+        <label class="form-label">Date of Birth</label>
+        <input type="text" disabled class="form-control" value="@ViewBag.DateOfBirth">
+        <input type="text"  class="form-control" asp-for="QuoteInfoVM.DateOfBirth" hidden>
+
     </div>
     <div class="col-4">
-        <label asp-for="DQuoteInfoVM.Gender" class="form-label"></label>
-        <input type="text" class="form-control" disabled asp-for="DQuoteInfoVM.Gender">
+        <label asp-for="QuoteInfoVM.Gender" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="QuoteInfoVM.Gender">
+        <input type="text" class="form-control" hidden asp-for="QuoteInfoVM.Gender">
     </div>
     <div class="col-md-4">
-        <label asp-for="DQuoteInfoVM.City" class="form-label"></label>
-        <input type="text" class="form-control" disabled asp-for="DQuoteInfoVM.City">
+        <label asp-for="QuoteInfoVM.City" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="QuoteInfoVM.City">
+        <input type="text" class="form-control" hidden asp-for="QuoteInfoVM.City">
     </div>
     <div class="col-md-4">
-         <label asp-for="DQuoteInfoVM.MaritalStatus" class="form-label"></label>
-        <input type="text" class="form-control" disabled asp-for="DQuoteInfoVM.MaritalStatus">
-        
+        <label asp-for="QuoteInfoVM.MaritalStatus" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="QuoteInfoVM.MaritalStatus">
+        <input type="text" class="form-control" hidden asp-for="QuoteInfoVM.MaritalStatus">
+
     </div>
     <div class="col-md-4">
-       <label asp-for="DQuoteInfoVM.VehicleMake" class="form-label"></label>
-       <input type="text" class="form-control" disabled asp-for="DQuoteInfoVM.VehicleMake">
+        <label asp-for="QuoteInfoVM.VehicleMake" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="QuoteInfoVM.VehicleMake">
+        <input type="text" class="form-control" hidden asp-for="QuoteInfoVM.VehicleMake">
     </div>
     <hr />
     <div class="col-md-4">
-       <label asp-for="PremiumValue.Premium" class="form-label"></label>
-       <input type="text" class="form-control" disabled asp-for="PremiumValue.Premium">
+        <label asp-for="PremiumValue.Premium" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="PremiumValue.Premium">
+        <input type="text" class="form-control" hidden asp-for="PremiumValue.Premium">
     </div>
     <div class="col-md-4">
-       <label asp-for="PremiumValue.Tax" class="form-label"></label>
-       <input type="text" class="form-control" disabled asp-for="PremiumValue.Tax">
+        <label asp-for="PremiumValue.Tax" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="PremiumValue.Tax">
+        <input type="text" class="form-control" hidden asp-for="PremiumValue.Tax">
     </div>
     <div class="col-4 mt-5">
         <button type="submit" class="btn btn-secondary" style="background-color:#3b6767">Buy the Policy</button>

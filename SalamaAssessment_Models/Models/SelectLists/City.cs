@@ -9,8 +9,8 @@ namespace SalamaAssessment_Models.Models.SelectLists
 {
     public enum City
     {
-        [Description("الرياض - RIYADH")] RIYADH,
-        [Description("جدة - JEDDAH")] Jeddah,
-        [Description("الطائف - TAIF")] TAIF,
+         RIYADH,
+         Jeddah,
+         TAIF,
     }
 }
