@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SalamaAssessment_Models.Models;
 
 namespace SalamaAssessment.Data
 {
@@ -9,5 +10,7 @@ namespace SalamaAssessment.Data
             : base(options)
         {
         }
+
+        public DbSet<QuoteInfo> quoteInfo{ get; set; }
     }
 }

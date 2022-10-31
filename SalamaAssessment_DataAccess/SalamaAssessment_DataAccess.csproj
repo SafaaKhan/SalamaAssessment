@@ -12,11 +12,18 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.7" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.7" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  <PackageReference Include="RestSharp" Version="108.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Initializer\" />
     <Folder Include="Repositories\IRepositires\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SalamaAssessment_Models\SalamaAssessment_Models.csproj" />
+    <ProjectReference Include="..\SalamaAssessment_Utilities\SalamaAssessment_Utilities.csproj" />
   </ItemGroup>
 
 </Project>
