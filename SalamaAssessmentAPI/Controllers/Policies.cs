@@ -7,8 +7,9 @@ using SalamaAssessment_Models.Models.ValidationModels;
 
 namespace SalamaAssessmentAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class Policies : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -19,7 +20,7 @@ namespace SalamaAssessmentAPI.Controllers
         }
 
         /// <summary>
-        ///  Get policy information from salama web app
+        ///  Get policy information from salama web app / version no. 1
         /// </summary>
         ///<remarks>
         ///   Sample request: 
@@ -29,10 +30,25 @@ namespace SalamaAssessmentAPI.Controllers
         ///"policyHolderName": "Test Policy Api",
         ///"policyHolderId": "1000000012"
         ///  }
-        /// 
-        /// </remarks>
+        ///</remarks>
         /// <param name="postPolicyInfoDto">Please, check the end of the web page for the model info(PostPolicyInfoDto)</param>
         /// <returns></returns>
+        /// <response code="200">
+        ///    For successful response:
+        ///     {
+        /// "status": true,
+        /// "getPolicyDetailsDto": {
+        ///  "policyHolderName": "Test Policy Api",
+        ///  "quotationId": "502000000093",
+        ///  "city": "Jeddah",
+        ///  "dateOfBirth": "05-11-2022",
+        ///  "gender": "Female",
+        ///  "maritalStatus": "Married",
+        ///  "vehicleMake": "BMW",
+        ///  "policyNumber": "90200000009536"
+        ///  }
+        /// 
+        /// </response>
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> GetPolicy(PostPolicyInfoDto postPolicyInfoDto)
