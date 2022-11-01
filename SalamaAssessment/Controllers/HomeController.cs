@@ -30,7 +30,6 @@ namespace SalamaAssessment.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var intGuid = System.Guid.NewGuid().ToString().Substring(0, 12);
             QuoteInfoVM quoteInfovm = new QuoteInfoVM();
            
             return View(quoteInfovm);
