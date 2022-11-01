@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-SalamaAssessment-B20A8D06-6B21-4D32-992E-2B30E6DA68F9</UserSecretsId>
   </PropertyGroup>
