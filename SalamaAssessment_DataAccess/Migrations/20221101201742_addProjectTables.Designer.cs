@@ -9,11 +9,11 @@ using SalamaAssessment.Data;
 
 #nullable disable
 
-namespace SalamaAssessment.Data.Migrations
+namespace SalamaAssessment_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221101051934_addPolicyInfoTable")]
-    partial class addPolicyInfoTable
+    [Migration("20221101201742_addProjectTables")]
+    partial class addProjectTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -254,9 +254,6 @@ namespace SalamaAssessment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PolicyInfoIdKey")
-                        .HasColumnType("int");
-
                     b.Property<string>("QuoteInfoId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -265,9 +262,6 @@ namespace SalamaAssessment.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PolicyInfoIdKey")
-                        .IsUnique();
 
                     b.HasIndex("QuoteInfoIdKey")
                         .IsUnique();
@@ -283,11 +277,17 @@ namespace SalamaAssessment.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("PaymentInfoIdKey")
+                        .HasColumnType("int");
+
                     b.Property<string>("PolicyNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PaymentInfoIdKey")
+                        .IsUnique();
 
                     b.ToTable("PolicyInfo");
                 });
@@ -386,26 +386,29 @@ namespace SalamaAssessment.Data.Migrations
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
                 {
-                    b.HasOne("SalamaAssessment_Models.Models.PolicyInfo", "PolicyInfo")
-                        .WithOne("PaymentInfo")
-                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "PolicyInfoIdKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SalamaAssessment_Models.Models.QuoteInfo", "QuoteInfo")
                         .WithOne("PaymentInfo")
                         .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "QuoteInfoIdKey")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PolicyInfo");
-
                     b.Navigation("QuoteInfo");
                 });
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.PolicyInfo", b =>
                 {
-                    b.Navigation("PaymentInfo")
+                    b.HasOne("SalamaAssessment_Models.Models.PaymentInfo", "PaymentInfo")
+                        .WithOne("PolicyInfo")
+                        .HasForeignKey("SalamaAssessment_Models.Models.PolicyInfo", "PaymentInfoIdKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentInfo");
+                });
+
+            modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
+                {
+                    b.Navigation("PolicyInfo")
                         .IsRequired();
                 });
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SalamaAssessment.Data;
+using SalamaAssessment_DataAccess.Initializer;
 using SalamaAssessment_Models.Models.ValidationModels;
 using System.Net.Mime;
 using System.Reflection;
@@ -50,12 +51,8 @@ builder.Services.AddApiVersioning(o =>
         new MediaTypeApiVersionReader("ver"));
 });
 
-//builder.Services.AddVersionedApiExplorer(
-//    options =>
-//    {
-//        options.GroupNameFormat = "'v'VVV";
-//        options.SubstituteApiVersionInUrl = true;
-//    });
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 
 var app = builder.Build();
 
@@ -70,6 +67,19 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+SeedDatabase();
+
 app.MapControllers();
 
 app.Run();
+
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        // use dbInitializer
+        dbInitializer.Initialize();
+    }
+}

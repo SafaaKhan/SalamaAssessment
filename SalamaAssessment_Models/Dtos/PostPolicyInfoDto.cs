@@ -9,7 +9,7 @@ namespace SalamaAssessment_Models.Dtos
 {
     public class PostPolicyInfoDto
     {
-        //model validation
+     
         [Required]
         [MinLength(3, ErrorMessage = "Policyholder Name must be at least 3 characters.")]
         public string PolicyHolderName { get; set; }

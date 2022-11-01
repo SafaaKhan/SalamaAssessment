@@ -9,7 +9,7 @@ namespace SalamaAssessment_Models.Models
 {
     public class PaymentInfo
     {
-        public int Id { get; set; }//id
+        public int Id { get; set; }
         public string CardholderId { get; set; }
         public string CardNumber{ get; set; }
         public string CVV { get; set; }

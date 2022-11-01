@@ -3,7 +3,7 @@
 <div class="text-start">
     <h1>Policy Information</h1>
 </div>
-<form method="post" enctype="multipart/form-data" asp-action="BuyPolicy" class="row g-3">
+<form onsubmit="alert('stop submit'); return false;" enctype="multipart/form-data"  class="row g-3">
 
     <div class="col-md-4">
         <label asp-for="displayQuoteInfoVM.CustomerName" class="form-label"></label>
@@ -32,5 +32,9 @@
     <div class="col-md-4">
         <label asp-for="PolicyNumber" class="form-label"></label>
         <input type="text" class="form-control" disabled asp-for="PolicyNumber">
+    </div>
+    <div class="col-md-4">
+        <label asp-for="PolicyHolderId" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="PolicyHolderId">
     </div>
 </form>

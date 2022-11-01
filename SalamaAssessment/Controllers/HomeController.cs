@@ -118,6 +118,7 @@ namespace SalamaAssessment.Controllers
                     return View("BuyPolicy",paymentInfoVM);//error mes (fail to process payment )
                 }
 
+
                 //save payment info to the database
                 PaymentInfo paymentInfo = new PaymentInfo
                 {
@@ -134,6 +135,8 @@ namespace SalamaAssessment.Controllers
 
                 paymentInfo.CardholderId= (paymentInfo.Id + 1000000000).ToString();//must be 10 digits
                 await _db.SaveChangesAsync();
+
+
                 //Push Policy Information to SALAMA Core System (IssuePolicy)
                 ReturnPolicyNumber returnPolicyNumber = await PushPolicyInfoToSCoreSys(paymentInfoVM.QuotationId);
                 if (returnPolicyNumber == null)
@@ -154,14 +157,15 @@ namespace SalamaAssessment.Controllers
                 {
                     displayQuoteInfoVM = new DisplayQuoteInfoVM
                     {
-                        CustomerName= paymentInfo.CardholderName,
-                        City= qouteInfo.City,
-                        DateOfBirth= qouteInfo.DateOfBirth?.ToString("dd-MM-yyyy"),
-                        Gender= qouteInfo.Gender,
-                        MaritalStatus= qouteInfo.MaritalStatus,
-                        VehicleMake= qouteInfo.VehicleMake
+                        CustomerName = paymentInfo.CardholderName,
+                        City = qouteInfo.City,
+                        DateOfBirth = qouteInfo.DateOfBirth?.ToString("dd-MM-yyyy"),
+                        Gender = qouteInfo.Gender,
+                        MaritalStatus = qouteInfo.MaritalStatus,
+                        VehicleMake = qouteInfo.VehicleMake
                     },
-                    PolicyNumber= returnPolicyNumber.policy_number
+                    PolicyNumber = returnPolicyNumber.policy_number,
+                    PolicyHolderId = paymentInfo.CardholderId
                 };
                 return View("PolicyDetails", displayPolicyVM);
             }

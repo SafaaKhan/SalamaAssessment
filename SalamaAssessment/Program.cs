@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SalamaAssessment.Data;
+using SalamaAssessment_DataAccess.Initializer;
 using SalamaAssessment_DataAccess.Repositories;
 using SalamaAssessment_DataAccess.Repositories.IRepositires;
 
@@ -17,7 +18,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ISalamExternalAPIs, SalamaExternalAPIs>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,9 +42,22 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+SeedDatabase();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
+
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        // use dbInitializer
+        dbInitializer.Initialize();
+    }
+}

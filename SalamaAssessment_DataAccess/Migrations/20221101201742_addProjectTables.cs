@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SalamaAssessment.Migrations
+namespace SalamaAssessment_DataAccess.Migrations
 {
-    public partial class initial : Migration
+    public partial class addProjectTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,26 @@ namespace SalamaAssessment.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuoteInfo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QuotationId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerNationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<int>(type: "int", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    MaritalStatus = table.Column<int>(type: "int", nullable: false),
+                    VehicleMake = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuoteInfo", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -154,6 +174,51 @@ namespace SalamaAssessment.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PaymentInfo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CardholderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CVV = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CardholderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuoteInfoId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuoteInfoIdKey = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentInfo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentInfo_QuoteInfo_QuoteInfoIdKey",
+                        column: x => x.QuoteInfoIdKey,
+                        principalTable: "QuoteInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PolicyInfo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PolicyNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentInfoIdKey = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PolicyInfo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PolicyInfo_PaymentInfo_PaymentInfoIdKey",
+                        column: x => x.PaymentInfoIdKey,
+                        principalTable: "PaymentInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -192,6 +257,18 @@ namespace SalamaAssessment.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentInfo_QuoteInfoIdKey",
+                table: "PaymentInfo",
+                column: "QuoteInfoIdKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PolicyInfo_PaymentInfoIdKey",
+                table: "PolicyInfo",
+                column: "PaymentInfoIdKey",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -212,10 +289,19 @@ namespace SalamaAssessment.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "PolicyInfo");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "PaymentInfo");
+
+            migrationBuilder.DropTable(
+                name: "QuoteInfo");
         }
     }
 }

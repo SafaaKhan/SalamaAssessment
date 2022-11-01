@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Initializer\" />
     <Folder Include="Repositories\IRepositires\" />
   </ItemGroup>
 
