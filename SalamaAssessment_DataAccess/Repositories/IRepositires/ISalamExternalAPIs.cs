@@ -16,5 +16,6 @@ namespace SalamaAssessment_DataAccess.Repositories.IRepositires
         Task<ReturnedPaymentInfo> PostPaymentInfo(PostPaymentInfo postPaymentInfo);
 
         //post policy information to salama core system
+        Task<ReturnPolicyNumber> PostInfoForPolicy(PostInfoForPolicy postInfoForPolicy);
     }
 }

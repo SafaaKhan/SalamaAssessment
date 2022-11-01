@@ -9,7 +9,8 @@ namespace SalamaAssessment_Models.Models
 {
     public class PaymentInfo
     {
-        public string Id { get; set; }
+        public int Id { get; set; }//id
+        public string CardholderId { get; set; }
         public string CardNumber{ get; set; }
         public string CVV { get; set; }
         public string ExpiryDate { get; set; }
@@ -21,6 +22,8 @@ namespace SalamaAssessment_Models.Models
         [ForeignKey("QuoteInfoIdKey")]
         public QuoteInfo QuoteInfo { get; set; }
         
+        public PolicyInfo PolicyInfo { get; set; }
+
 
     }
 }

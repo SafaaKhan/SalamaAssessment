@@ -12,8 +12,8 @@ using SalamaAssessment.Data;
 namespace SalamaAssessment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221031180713_addPaymentInfoTable")]
-    partial class addPaymentInfoTable
+    [Migration("20221101051934_addPolicyInfoTable")]
+    partial class addPolicyInfoTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -228,14 +228,21 @@ namespace SalamaAssessment.Data.Migrations
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CVV")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardholderId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -247,9 +254,42 @@ namespace SalamaAssessment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PolicyInfoIdKey")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuoteInfoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuoteInfoIdKey")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("PolicyInfoIdKey")
+                        .IsUnique();
+
+                    b.HasIndex("QuoteInfoIdKey")
+                        .IsUnique();
+
                     b.ToTable("PaymentInfo");
+                });
+
+            modelBuilder.Entity("SalamaAssessment_Models.Models.PolicyInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("PolicyNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PolicyInfo");
                 });
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.QuoteInfo", b =>
@@ -341,6 +381,37 @@ namespace SalamaAssessment.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
+                {
+                    b.HasOne("SalamaAssessment_Models.Models.PolicyInfo", "PolicyInfo")
+                        .WithOne("PaymentInfo")
+                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "PolicyInfoIdKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SalamaAssessment_Models.Models.QuoteInfo", "QuoteInfo")
+                        .WithOne("PaymentInfo")
+                        .HasForeignKey("SalamaAssessment_Models.Models.PaymentInfo", "QuoteInfoIdKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PolicyInfo");
+
+                    b.Navigation("QuoteInfo");
+                });
+
+            modelBuilder.Entity("SalamaAssessment_Models.Models.PolicyInfo", b =>
+                {
+                    b.Navigation("PaymentInfo")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SalamaAssessment_Models.Models.QuoteInfo", b =>
+                {
+                    b.Navigation("PaymentInfo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

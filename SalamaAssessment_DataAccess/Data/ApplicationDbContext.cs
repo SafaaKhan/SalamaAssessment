@@ -13,5 +13,6 @@ namespace SalamaAssessment.Data
 
         public DbSet<QuoteInfo> QuoteInfo { get; set; }
         public DbSet<PaymentInfo> PaymentInfo { get; set; }
+        public DbSet<PolicyInfo> PolicyInfo { get; set; }
     }
 }

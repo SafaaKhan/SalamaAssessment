@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SalamaAssessment.Data;
 using SalamaAssessment.Models;
 using SalamaAssessment_DataAccess.Repositories.IRepositires;
@@ -29,6 +30,7 @@ namespace SalamaAssessment.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var intGuid = System.Guid.NewGuid().ToString().Substring(0, 12);
             QuoteInfoVM quoteInfovm = new QuoteInfoVM();
            
             return View(quoteInfovm);
@@ -79,12 +81,12 @@ namespace SalamaAssessment.Controllers
                 Gender = getPremiumViewModel.QuoteInfoVM.Gender,
                 MaritalStatus = getPremiumViewModel.QuoteInfoVM.MaritalStatus,
                 VehicleMake = getPremiumViewModel.QuoteInfoVM.VehicleMake,
-                QuotationId=""
+                QuotationId="",
             };
             _db.QuoteInfo.Add(quoteInfo);
             await _db.SaveChangesAsync();
 
-            quoteInfo.QuotationId = (quoteInfo.Id + 50200).ToString();
+            quoteInfo.QuotationId = (quoteInfo.Id + 502000000000).ToString();//must be 5 to 13
             await _db.SaveChangesAsync();
 
             //create payment model- pass it to the view
@@ -112,7 +114,7 @@ namespace SalamaAssessment.Controllers
                 };
 
                 ReturnedPaymentInfo returnedPaymentInfo = await _salamExternalAPIs.PostPaymentInfo(postPaymentInfo);
-                if ( returnedPaymentInfo == null) //?
+                if ( returnedPaymentInfo == null) 
                 {
                     return View("BuyPolicy",paymentInfoVM);//error mes (fail to process payment )
                 }
@@ -120,29 +122,74 @@ namespace SalamaAssessment.Controllers
                 //save payment info to the database
                 PaymentInfo paymentInfo = new PaymentInfo
                 {
-                    Id= Guid.NewGuid().ToString(),
-                    CardholderName= paymentInfoVM.CardholderName,
-                    CardNumber=paymentInfoVM.CardNumber,
-                    CVV= paymentInfoVM.CVV,
-                    ExpiryDate=paymentInfoVM.ExpiryDate,
-                    QuoteInfoId= paymentInfoVM.QuotationId,
-                    QuoteInfoIdKey= paymentInfoVM.QuotationIdKey
+                    CardholderName = paymentInfoVM.CardholderName,
+                    CardNumber = paymentInfoVM.CardNumber,
+                    CVV = paymentInfoVM.CVV,
+                    ExpiryDate = paymentInfoVM.ExpiryDate,
+                    QuoteInfoId = paymentInfoVM.QuotationId,
+                    QuoteInfoIdKey = paymentInfoVM.QuotationIdKey,
+                    CardholderId=""
                 };
                 _db.PaymentInfo.Add(paymentInfo);
                 await _db.SaveChangesAsync();
 
+                paymentInfo.CardholderId= (paymentInfo.Id + 1000000000).ToString();//must be 10 digits
+                await _db.SaveChangesAsync();
                 //Push Policy Information to SALAMA Core System (IssuePolicy)
-                PushPolicyInfoToSCoreSys();
-                return View("PolicyDetails");
+                ReturnPolicyNumber returnPolicyNumber = await PushPolicyInfoToSCoreSys(paymentInfoVM.QuotationId);
+                if (returnPolicyNumber == null)
+                {
+                    return View("BuyPolicy", paymentInfoVM);//error mes
+                }
+                //save poolicy to db
+                PolicyInfo policyInfo = new PolicyInfo
+                {
+                    PolicyNumber= returnPolicyNumber.policy_number,
+                    PaymentInfoIdKey= paymentInfo.Id
+                };
+                _db.PolicyInfo.Add(policyInfo);
+                await _db.SaveChangesAsync();
+                //display policy info view model
+                var qouteInfo = _db.QuoteInfo.Include(x => x.PaymentInfo).FirstOrDefault(x => x.QuotationId == paymentInfoVM.QuotationId);
+                DisplayPolicyVM displayPolicyVM = new DisplayPolicyVM
+                {
+                    displayQuoteInfoVM = new DisplayQuoteInfoVM
+                    {
+                        CustomerName= paymentInfo.CardholderName,
+                        City= qouteInfo.City,
+                        DateOfBirth= qouteInfo.DateOfBirth?.ToString("dd-MM-yyyy"),
+                        Gender= qouteInfo.Gender,
+                        MaritalStatus= qouteInfo.MaritalStatus,
+                        VehicleMake= qouteInfo.VehicleMake
+                    },
+                    PolicyNumber= returnPolicyNumber.policy_number
+                };
+                return View("PolicyDetails", displayPolicyVM);
             }
             return View("BuyPolicy",paymentInfoVM);
         }
 
-        private IActionResult PushPolicyInfoToSCoreSys()
+
+        private async Task<ReturnPolicyNumber> PushPolicyInfoToSCoreSys(string quoteInfoId)
         {
+            var qouteInfo = _db.QuoteInfo.Include(x=>x.PaymentInfo).FirstOrDefault(x => x.QuotationId == quoteInfoId);
             //must return the model not view
-            return View();
+            PostInfoForPolicy postInfoForPolicy = new PostInfoForPolicy
+            {
+                policy_holder_name= qouteInfo.PaymentInfo.CardholderName,
+                policy_holder_id= qouteInfo.PaymentInfo.CardholderId,
+                city=qouteInfo.City.ToString(),
+                dob = qouteInfo.DateOfBirth?.ToString("dd-MM-yyyy"),
+                gender = qouteInfo.Gender.ToString(),
+                marital_status = qouteInfo.MaritalStatus.ToString(),
+                vehicle_make = qouteInfo.VehicleMake.ToString(),
+                quotation_id=quoteInfoId,
+            };
+            ReturnPolicyNumber returnPolicyNumber= await _salamExternalAPIs.PostInfoForPolicy(postInfoForPolicy);
+           
+            return returnPolicyNumber;
         }
+
         public IActionResult Privacy()
         {
             return View();

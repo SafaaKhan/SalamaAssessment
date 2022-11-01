@@ -1,5 +1,36 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model SalamaAssessment_Models.ViewModels.DisplayPolicyVM
+
+<div class="text-start">
+    <h1>Policy Information</h1>
+</div>
+<form method="post" enctype="multipart/form-data" asp-action="BuyPolicy" class="row g-3">
+
+    <div class="col-md-4">
+        <label asp-for="displayQuoteInfoVM.CustomerName" class="form-label"></label>
+        <input type="text" disabled class="form-control" asp-for="displayQuoteInfoVM.CustomerName">
+    </div>
+    <div class="col-4">
+        <label asp-for="displayQuoteInfoVM.DateOfBirth" class="form-label">Date of Birth</label>
+        <input type="text" disabled class="form-control" asp-for="displayQuoteInfoVM.DateOfBirth">
+    </div>
+    <div class="col-4">
+        <label asp-for="displayQuoteInfoVM.Gender" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="displayQuoteInfoVM.Gender">
+    </div>
+    <div class="col-md-4">
+        <label asp-for="displayQuoteInfoVM.City" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="displayQuoteInfoVM.City">
+    </div>
+    <div class="col-md-4">
+        <label asp-for="displayQuoteInfoVM.MaritalStatus" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="displayQuoteInfoVM.MaritalStatus">
+    </div>
+    <div class="col-md-4">
+        <label asp-for="displayQuoteInfoVM.VehicleMake" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="displayQuoteInfoVM.VehicleMake">
+    </div>
+    <div class="col-md-4">
+        <label asp-for="PolicyNumber" class="form-label"></label>
+        <input type="text" class="form-control" disabled asp-for="PolicyNumber">
+    </div>
+</form>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalamaAssessment.Data;
 
@@ -11,9 +12,10 @@ using SalamaAssessment.Data;
 namespace SalamaAssessment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221101041921_addCutomerIdToQuoteInfoTable")]
+    partial class addCutomerIdToQuoteInfoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,21 +228,14 @@ namespace SalamaAssessment.Data.Migrations
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CVV")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CardholderId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -267,29 +262,6 @@ namespace SalamaAssessment.Data.Migrations
                     b.ToTable("PaymentInfo");
                 });
 
-            modelBuilder.Entity("SalamaAssessment_Models.Models.PolicyInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("PaymentInfoIdKey")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PolicyNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaymentInfoIdKey")
-                        .IsUnique();
-
-                    b.ToTable("PolicyInfo");
-                });
-
             modelBuilder.Entity("SalamaAssessment_Models.Models.QuoteInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -300,6 +272,10 @@ namespace SalamaAssessment.Data.Migrations
 
                     b.Property<int>("City")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
@@ -391,23 +367,6 @@ namespace SalamaAssessment.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("QuoteInfo");
-                });
-
-            modelBuilder.Entity("SalamaAssessment_Models.Models.PolicyInfo", b =>
-                {
-                    b.HasOne("SalamaAssessment_Models.Models.PaymentInfo", "PaymentInfo")
-                        .WithOne("PolicyInfo")
-                        .HasForeignKey("SalamaAssessment_Models.Models.PolicyInfo", "PaymentInfoIdKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaymentInfo");
-                });
-
-            modelBuilder.Entity("SalamaAssessment_Models.Models.PaymentInfo", b =>
-                {
-                    b.Navigation("PolicyInfo")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SalamaAssessment_Models.Models.QuoteInfo", b =>

@@ -14,7 +14,7 @@ namespace SalamaAssessment_Models.Models
         [Key]
         public int Id { get; set; }
         public string QuotationId { get; set; } 
-        public string CustomerName { get; set; }=String.Empty;//???
+        public string CustomerName { get; set; }
         public string CustomerNationalId { get; set; }
         [Required]
         public City? City { get; set; }
