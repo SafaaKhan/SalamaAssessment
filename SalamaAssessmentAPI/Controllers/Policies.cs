@@ -19,9 +19,19 @@ namespace SalamaAssessmentAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///  Get policy information from salama web app
         /// </summary>
-        /// <param name="postPolicyInfoDto"></param>
+        ///<remarks>
+        ///   Sample request: 
+        /// 
+        ///     POST api/Policies
+        ///  {
+        ///"policyHolderName": "Test Policy Api",
+        ///"policyHolderId": "1000000012"
+        ///  }
+        /// 
+        /// </remarks>
+        /// <param name="postPolicyInfoDto">Please, check the end of the web page for the model info(PostPolicyInfoDto)</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
