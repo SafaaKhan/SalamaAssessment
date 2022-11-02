@@ -7,7 +7,9 @@ using SalamaAssessment_Models.ExternalSalamAPIsModels;
 using SalamaAssessment_Models.Models;
 using SalamaAssessment_Models.Models.SelectLists;
 using SalamaAssessment_Models.ViewModels;
+using SalamaAssessment_Utilities;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace SalamaAssessment.Controllers
 {
@@ -27,16 +29,20 @@ namespace SalamaAssessment.Controllers
             _db = db;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index() 
         {
             QuoteInfoVM quoteInfovm = new QuoteInfoVM();
-           
+
+            ViewBag.Error = false;
             return View(quoteInfovm);
         }
 
+
+        [HttpPost] //get premium value
         [ValidateAntiForgeryToken]
-        [HttpPost]
+
         public async Task<IActionResult> Index(QuoteInfoVM quoteInfovm)
         {
             if (ModelState.IsValid)
@@ -49,10 +55,12 @@ namespace SalamaAssessment.Controllers
                     marital_status = quoteInfovm.MaritalStatus.ToString(),
                     vehicle_make = quoteInfovm.VehicleMake.ToString(),
                 };
+                //call get premium api
                 PremiumValue premiumValue = await _salamExternalAPIs.GetPremium(postPQMInfo);
                 if (premiumValue.Premium == 0 || premiumValue==null)
                 {
-                    return View(quoteInfovm);//error mes
+                    ViewBag.Error = true;
+                    return View(quoteInfovm);
                 }
 
                 var getPremiumViewModel = new GetPremiumViewModel
@@ -61,8 +69,10 @@ namespace SalamaAssessment.Controllers
                     QuoteInfoVM=quoteInfovm
                 };
                 ViewBag.DateOfBirth = quoteInfovm.DateOfBirth?.ToString("dd-MM-yyyy");
+                ViewBag.Error = false;
                 return View("GetPremium", getPremiumViewModel);
             }
+            ViewBag.Error = false;
             return View(quoteInfovm);
         }
 
@@ -92,6 +102,7 @@ namespace SalamaAssessment.Controllers
             var paymentInfoVM = new PaymentInfoVM();
             paymentInfoVM.QuotationId=quoteInfo.QuotationId;
             paymentInfoVM.QuotationIdKey = quoteInfo.Id;
+            ViewBag.Error = false;
             return View("BuyPolicy", paymentInfoVM);
         }
 
@@ -102,19 +113,21 @@ namespace SalamaAssessment.Controllers
         {
             if (ModelState.IsValid)
             {
+                var date= Regex.Replace(paymentInfoVM.ExpiryDate, @"[^0-9a-zA-Z\._]", "");
                 // post the payment in to spg api
                 PostPaymentInfo postPaymentInfo = new PostPaymentInfo
                 {
                     cardholder_name = paymentInfoVM.CardholderName,
                     card_number = paymentInfoVM.CardNumber,
                     cvv = paymentInfoVM.CVV,
-                    expiry_date = paymentInfoVM.ExpiryDate.Replace(@"/", string.Empty),
+                    expiry_date = date,
                     quotation_id = paymentInfoVM.QuotationId
                 };
 
                 ReturnedPaymentInfo returnedPaymentInfo = await _salamExternalAPIs.PostPaymentInfo(postPaymentInfo);
                 if ( returnedPaymentInfo == null) 
                 {
+                    ViewBag.Error = true;
                     return View("BuyPolicy",paymentInfoVM);//error mes (fail to process payment )
                 }
 
@@ -141,6 +154,7 @@ namespace SalamaAssessment.Controllers
                 ReturnPolicyNumber returnPolicyNumber = await PushPolicyInfoToSCoreSys(paymentInfoVM.QuotationId);
                 if (returnPolicyNumber == null)
                 {
+                    ViewBag.Error = true;
                     return View("BuyPolicy", paymentInfoVM);//error mes
                 }
                 //save poolicy to db
@@ -151,6 +165,8 @@ namespace SalamaAssessment.Controllers
                 };
                 _db.PolicyInfo.Add(policyInfo);
                 await _db.SaveChangesAsync();
+
+
                 //display policy info view model
                 var qouteInfo = _db.QuoteInfo.Include(x => x.PaymentInfo).FirstOrDefault(x => x.QuotationId == paymentInfoVM.QuotationId);
                 DisplayPolicyVM displayPolicyVM = new DisplayPolicyVM
@@ -167,12 +183,15 @@ namespace SalamaAssessment.Controllers
                     PolicyNumber = returnPolicyNumber.policy_number,
                     PolicyHolderId = paymentInfo.CardholderId
                 };
+                ViewBag.Error = false;
                 return View("PolicyDetails", displayPolicyVM);
             }
+            ViewBag.Error = false;
             return View("BuyPolicy",paymentInfoVM);
         }
 
 
+        //Push Policy Information to SALAMA Core System (IssuePolicy) method 
         private async Task<ReturnPolicyNumber> PushPolicyInfoToSCoreSys(string quoteInfoId)
         {
             var qouteInfo = _db.QuoteInfo.Include(x=>x.PaymentInfo).FirstOrDefault(x => x.QuotationId == quoteInfoId);

@@ -25,6 +25,7 @@ namespace SalamaAssessment_Models.ViewModels
         public string CVV { get; set; }
 
         [Required]
+        [RegularExpression(@"^([0-9/]{5})$", ErrorMessage = "Expiry Date must be in format MM/YY")]
         [DisplayName("Expiry Date")]
         public string ExpiryDate { get; set; }//4 char
 

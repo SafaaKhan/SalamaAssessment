@@ -8,6 +8,8 @@
     <h1>Buy the Policy</h1>
     <p>Enter your payment details | The cost: $ </p>
 </div>
+@if (!ViewBag.Error)
+{
 <form method="post" asp-action="PurchasePolicy" enctype="multipart/form-data" class="row g-2 ">
     <input type="text" class="form-control" asp-for="QuotationId" hidden>
     <input type="text" class="form-control" asp-for="QuotationIdKey" hidden>
@@ -37,3 +39,8 @@
         <button type="submit" class="btn btn-secondary " style="background-color:#3b6767" >Pay</button>
     </div>
 </form>
+}
+else{
+<h2 class="text-danger">Error.</h2>
+<h3 class="text-danger">Fail to process payment .</h3>
+}
